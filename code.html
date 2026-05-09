@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ember & Oak</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    :root{
+      --surface:#fff9ef;
+      --surface-dim:#e2d9c5;
+      --surface-bright:#fff9ef;
+      --surface-container-lowest:#ffffff;
+      --surface-container-low:#fcf3de;
+      --surface-container:#f6edd8;
+      --surface-container-high:#f0e7d3;
+      --surface-container-highest:#ebe2cd;
+
+      --on-surface:#1f1b0f;
+      --on-surface-variant:#4f453f;
+
+      --outline:#81756e;
+      --outline-variant:#d3c4bc;
+
+      --primary:#0d0300;
+      --secondary:#934a27;
+      --secondary-container:#ffa277;
+
+      --shadow:rgba(44,26,14,.08);
+
+      --container:1200px;
+      --gutter:24px;
+      --section-gap:80px;
+      --radius:16px;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--surface);
+      color:var(--on-surface);
+      line-height:1.6;
+    }
+
+    img{
+      width:100%;
+      display:block;
+    }
+
+    a{
+      text-decoration:none;
+      color:inherit;
+    }
+
+    .container{
+      width:calc(100% - 64px);
+      max-width:var(--container);
+      margin:auto;
+    }
+
+    section{
+      padding:var(--section-gap) 0;
+    }
+
+    .headline-xl{
+      font-family:'Playfair Display',serif;
+      font-size:48px;
+      line-height:1.1;
+      font-weight:700;
+      letter-spacing:-0.02em;
+      color:var(--primary);
+    }
+
+    .headline-lg{
+      font-family:'Playfair Display',serif;
+      font-size:32px;
+      line-height:1.2;
+      font-weight:600;
+      color:var(--primary);
+    }
+
+    .headline-md{
+      font-family:'Playfair Display',serif;
+      font-size:24px;
+      line-height:1.3;
+      font-weight:600;
+      color:var(--primary);
+    }
+
+    .body-lg{
+      font-size:18px;
+      color:var(--on-surface-variant);
+    }
+
+    .body-md{
+      font-size:16px;
+      color:var(--on-surface-variant);
+    }
+
+    .label{
+      font-size:14px;
+      font-weight:600;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    /* HEADER */
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:999;
+      backdrop-filter:blur(12px);
+      background:rgba(255,249,239,.9);
+      border-bottom:1px solid rgba(0,0,0,.04);
+    }
+
+    .navbar{
+      height:84px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .logo h2{
+      font-family:'Playfair Display',serif;
+      font-size:28px;
+      color:var(--primary);
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      gap:40px;
+    }
+
+    nav a{
+      font-size:14px;
+      font-weight:600;
+      color:var(--on-surface-variant);
+      position:relative;
+      transition:.3s;
+    }
+
+    nav a:hover{
+      color:var(--secondary);
+    }
+
+    nav a.active{
+      color:var(--secondary);
+    }
+
+    nav a.active::after{
+      content:'';
+      position:absolute;
+      bottom:-10px;
+      left:50%;
+      transform:translateX(-50%);
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:var(--secondary);
+    }
+
+    .nav-btn{
+      background:var(--secondary);
+      color:#fff;
+      padding:14px 24px;
+      border-radius:12px;
+      transition:.3s;
+    }
+
+    .nav-btn:hover{
+      transform:translateY(-2px);
+    }
+
+    /* HERO */
+
+    .hero{
+      min-height:100vh;
+      position:relative;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      background:var(--surface-container-low);
+    }
+
+    .hero-bg{
+      position:absolute;
+      inset:0;
+      opacity:.18;
+    }
+
+    .hero-bg img{
+      height:100%;
+      object-fit:cover;
+    }
+
+    .hero-content{
+      position:relative;
+      z-index:2;
+      max-width:650px;
+    }
+
+    .hero-content p{
+      margin:24px 0 40px;
+    }
+
+    .hero-buttons{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .btn-primary{
+      background:var(--secondary);
+      color:#fff;
+      padding:18px 32px;
+      border-radius:14px;
+      font-weight:600;
+      transition:.3s;
+      box-shadow:0 10px 25px rgba(147,74,39,.15);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-2px);
+    }
+
+    .btn-secondary{
+      border:1px solid var(--primary);
+      color:var(--primary);
+      padding:18px 32px;
+      border-radius:14px;
+      font-weight:600;
+      transition:.3s;
+    }
+
+    .btn-secondary:hover{
+      background:rgba(0,0,0,.03);
+    }
+
+    /* ABOUT */
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:48px;
+      align-items:center;
+    }
+
+    .about-image{
+      position:relative;
+      overflow:hidden;
+      border-radius:18px;
+      height:520px;
+      box-shadow:0 20px 40px var(--shadow);
+    }
+
+    .about-image img{
+      height:100%;
+      object-fit:cover;
+    }
+
+    .about-image::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(to top,rgba(0,0,0,.35),transparent);
+      z-index:1;
+    }
+
+    .heritage{
+      color:var(--secondary);
+      margin-bottom:16px;
+      display:block;
+    }
+
+    .about-content h2{
+      margin-bottom:24px;
+    }
+
+    .about-content p{
+      margin-bottom:20px;
+    }
+
+    /* MENU */
+
+    .menu-section{
+      background:var(--surface-container-lowest);
+    }
+
+    .section-title{
+      text-align:center;
+      margin-bottom:60px;
+    }
+
+    .tabs{
+      display:flex;
+      justify-content:center;
+      gap:28px;
+      margin-top:32px;
+      flex-wrap:wrap;
+    }
+
+    .tab{
+      padding-bottom:12px;
+      border-bottom:2px solid transparent;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.3s;
+      color:var(--on-surface-variant);
+    }
+
+    .tab.active{
+      color:var(--secondary);
+      border-color:var(--secondary);
+    }
+
+    .menu-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:24px;
+    }
+
+    .menu-card{
+      background:var(--surface-bright);
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(129,117,110,.15);
+      transition:.35s;
+      box-shadow:0 4px 10px rgba(0,0,0,.03);
+    }
+
+    .menu-card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 20px 40px rgba(0,0,0,.08);
+    }
+
+    .menu-image{
+      height:260px;
+      overflow:hidden;
+    }
+
+    .menu-image img{
+      height:100%;
+      object-fit:cover;
+      transition:transform .6s ease;
+    }
+
+    .menu-card:hover img{
+      transform:scale(1.06);
+    }
+
+    .menu-content{
+      padding:24px;
+    }
+
+    .menu-top{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:10px;
+    }
+
+    .price{
+      color:var(--secondary);
+      font-weight:700;
+    }
+
+    .tag{
+      display:inline-block;
+      margin-top:18px;
+      background:var(--surface-container);
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--on-surface-variant);
+    }
+
+    /* FEATURES */
+
+    .features-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:24px;
+    }
+
+    .feature-card{
+      background:var(--surface-container-low);
+      padding:42px;
+      border-radius:18px;
+      transition:.3s;
+      box-shadow:0 10px 30px rgba(44,26,14,.04);
+    }
+
+    .feature-card:hover{
+      transform:translateY(-4px);
+    }
+
+    .feature-icon{
+      font-size:42px;
+      margin-bottom:24px;
+    }
+
+    /* GALLERY */
+
+    .gallery-section{
+      background:rgba(226,217,197,.2);
+    }
+
+    .gallery{
+      columns:3 300px;
+      column-gap:24px;
+    }
+
+    .gallery-item{
+      margin-bottom:24px;
+      overflow:hidden;
+      border-radius:18px;
+      break-inside:avoid;
+      box-shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+
+    .gallery-item img{
+      transition:.5s;
+    }
+
+    .gallery-item:hover img{
+      transform:scale(1.04);
+    }
+
+    /* TESTIMONIALS */
+
+    .testimonials{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:24px;
+    }
+
+    .testimonial{
+      border:1px solid rgba(129,117,110,.2);
+      padding:38px;
+      border-radius:18px;
+      background:var(--surface);
+    }
+
+    .stars{
+      color:#fdba49;
+      margin-bottom:22px;
+      letter-spacing:4px;
+    }
+
+    .testimonial p{
+      font-style:italic;
+      margin-bottom:30px;
+      color:var(--on-surface);
+    }
+
+    .author{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .avatar{
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      background:var(--secondary-container);
+    }
+
+    .author span{
+      display:block;
+    }
+
+    .author-name{
+      font-weight:600;
+      color:var(--primary);
+    }
+
+    .author-job{
+      font-size:13px;
+      color:var(--on-surface-variant);
+    }
+
+    /* RESERVATION */
+
+    .reservation-box{
+      background:var(--surface-container-high);
+      padding:60px;
+      border-radius:24px;
+      box-shadow:0 15px 40px rgba(44,26,14,.05);
+    }
+
+    .reservation-header{
+      text-align:center;
+      margin-bottom:50px;
+    }
+
+    form{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px;
+    }
+
+    .input-group{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    label{
+      font-size:14px;
+      font-weight:600;
+      color:var(--on-surface-variant);
+    }
+
+    input,
+    select{
+      border:none;
+      outline:none;
+      background:var(--surface-bright);
+      border-radius:14px;
+      padding:16px 18px;
+      font-size:15px;
+      border:1px solid rgba(129,117,110,.2);
+      transition:.3s;
+    }
+
+    input:focus,
+    select:focus{
+      border-color:var(--secondary);
+    }
+
+    .full{
+      grid-column:1/-1;
+    }
+
+    .submit-btn{
+      width:100%;
+      border:none;
+      background:var(--secondary);
+      color:#fff;
+      padding:18px;
+      border-radius:14px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.3s;
+      box-shadow:0 10px 25px rgba(147,74,39,.18);
+    }
+
+    .submit-btn:hover{
+      transform:translateY(-2px);
+    }
+
+    /* FOOTER */
+
+    footer{
+      background:var(--surface-container);
+      margin-top:80px;
+    }
+
+    .footer-top{
+      padding:80px 0;
+      display:flex;
+      justify-content:space-between;
+      gap:60px;
+      flex-wrap:wrap;
+    }
+
+    .footer-brand{
+      max-width:340px;
+    }
+
+    .footer-brand h2{
+      margin-bottom:18px;
+    }
+
+    .footer-links{
+      display:flex;
+      gap:80px;
+    }
+
+    .footer-links h4{
+      margin-bottom:22px;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .footer-links a{
+      display:block;
+      margin-bottom:14px;
+      color:var(--on-surface-variant);
+      transition:.3s;
+    }
+
+    .footer-links a:hover{
+      color:var(--primary);
+    }
+
+    .footer-bottom{
+      border-top:1px solid rgba(129,117,110,.15);
+      text-align:center;
+      padding:26px 0;
+      color:var(--on-surface-variant);
+      font-size:14px;
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width:1100px){
+
+      .menu-grid,
+      .features-grid,
+      .testimonials{
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+
+    @media(max-width:900px){
+
+      nav{
+        display:none;
+      }
+
+      .about-grid{
+        grid-template-columns:1fr;
+      }
+
+      .about-image{
+        order:-1;
+      }
+
+      form{
+        grid-template-columns:1fr;
+      }
+
+      .full{
+        grid-column:auto;
+      }
+
+      .footer-top{
+        flex-direction:column;
+      }
+    }
+
+    @media(max-width:700px){
+
+      .container{
+        width:calc(100% - 32px);
+      }
+
+      .headline-xl{
+        font-size:40px;
+      }
+
+      .headline-lg{
+        font-size:28px;
+      }
+
+      .menu-grid,
+      .features-grid,
+      .testimonials{
+        grid-template-columns:1fr;
+      }
+
+      .reservation-box{
+        padding:36px 24px;
+      }
+
+      .hero{
+        min-height:90vh;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+    <div class="container navbar">
+
+      <div class="logo">
+        <h2>Ember & Oak</h2>
+      </div>
+
+      <nav>
+        <a href="#" class="active">Home</a>
+        <a href="#menu">Menu</a>
+        <a href="#about">Our Story</a>
+        <a href="#reserve" class="nav-btn">Reserve a Table</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600&auto=format&fit=crop" alt="">
+    </div>
+
+    <div class="container">
+
+      <div class="hero-content">
+
+        <h1 class="headline-xl">
+          Where Every Bean Tells a Story
+        </h1>
+
+        <p class="body-lg">
+          Discover the art of slow-roasted perfection. We bridge the gap between rural heritage and urban sophistication in every pour.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#menu" class="btn-primary">Explore the Menu</a>
+          <a href="#reserve" class="btn-secondary">Book Your Table</a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ABOUT -->
+
+  <section id="about">
+
+    <div class="container about-grid">
+
+      <div class="about-content">
+
+        <span class="heritage label">Our Heritage</span>
+
+        <h2 class="headline-lg">
+          Crafting Moments in Every Cup
+        </h2>
+
+        <p class="body-md">
+          Ember & Oak was born from a passion for the tactile and the timeless. Our roastery focuses on ethical sourcing and meticulous roasting profiles that highlight the unique terroir of every harvest.
+        </p>
+
+        <p class="body-md">
+          Step into a space where the warmth of reclaimed oak meets the precision of modern brewing. We believe that a great cup of coffee is the foundation of community and quiet reflection.
+        </p>
+
+      </div>
+
+      <div class="about-image">
+        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1400&auto=format&fit=crop" alt="">
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- MENU -->
+
+  <section class="menu-section" id="menu">
+
+    <div class="container">
+
+      <div class="section-title">
+
+        <h2 class="headline-lg">
+          Our Seasonal Selection
+        </h2>
+
+        <div class="tabs">
+          <div class="tab active">Coffee</div>
+          <div class="tab">Food</div>
+          <div class="tab">Desserts</div>
+        </div>
+
+      </div>
+
+      <div class="menu-grid">
+
+        <div class="menu-card">
+
+          <div class="menu-image">
+            <img src="https://images.unsplash.com/photo-1561047029-3000c68339ca?q=80&w=1200&auto=format&fit=crop" alt="">
+          </div>
+
+          <div class="menu-content">
+
+            <div class="menu-top">
+              <h3 class="headline-md">Signature Latte</h3>
+              <span class="price">$6.50</span>
+            </div>
+
+            <p class="body-md">
+              Oat milk, double shot espresso, subtle notes of caramel.
+            </p>
+
+            <span class="tag">Smooth</span>
+
+          </div>
+
+        </div>
+
+        <div class="menu-card">
+
+          <div class="menu-image">
+            <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?q=80&w=1200&auto=format&fit=crop" alt="">
+          </div>
+
+          <div class="menu-content">
+
+            <div class="menu-top">
+              <h3 class="headline-md">Oak Cold Brew</h3>
+              <span class="price">$7.00</span>
+            </div>
+
+            <p class="body-md">
+              18-hour steep, single origin Ethiopia beans, citrus finish.
+            </p>
+
+            <span class="tag">Bold</span>
+
+          </div>
+
+        </div>
+
+        <div class="menu-card">
+
+          <div class="menu-image">
+            <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1200&auto=format&fit=crop" alt="">
+          </div>
+
+          <div class="menu-content">
+
+            <div class="menu-top">
+              <h3 class="headline-md">Velvet Cortado</h3>
+              <span class="price">$5.50</span>
+            </div>
+
+            <p class="body-md">
+              Equal parts espresso and steamed milk, velvety texture.
+            </p>
+
+            <span class="tag">Balanced</span>
+
+          </div>
+
+        </div>
+
+        <div class="menu-card">
+
+          <div class="menu-image">
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1200&auto=format&fit=crop" alt="">
+          </div>
+
+          <div class="menu-content">
+
+            <div class="menu-top">
+              <h3 class="headline-md">V60 Pour Over</h3>
+              <span class="price">$8.50</span>
+            </div>
+
+            <p class="body-md">
+              Light roast, rotating origin, hand-brewed to order.
+            </p>
+
+            <span class="tag">Fruity</span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FEATURES -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="features-grid">
+
+        <div class="feature-card">
+
+          <div class="feature-icon">☕</div>
+
+          <h3 class="headline-md">
+            Curated Ambiance
+          </h3>
+
+          <p class="body-md">
+            A sanctuary of textures, featuring artisanal furniture and a soundtrack designed for focus or connection.
+          </p>
+
+        </div>
+
+        <div class="feature-card">
+
+          <div class="feature-icon">♫</div>
+
+          <h3 class="headline-md">
+            Live Acoustic Nights
+          </h3>
+
+          <p class="body-md">
+            Join us every Thursday evening for local musicians performing soft jazz and acoustic folk.
+          </p>
+
+        </div>
+
+        <div class="feature-card">
+
+          <div class="feature-icon">✦</div>
+
+          <h3 class="headline-md">
+            Specialty Beans
+          </h3>
+
+          <p class="body-md">
+            Direct-trade beans roasted in small batches to preserve the nuanced flavors of the harvest.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- GALLERY -->
+
+  <section class="gallery-section">
+
+    <div class="container">
+
+      <div class="section-title">
+        <h2 class="headline-lg">
+          The Visual Narrative
+        </h2>
+      </div>
+
+      <div class="gallery">
+
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1494314671902-399b18174975?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1521302200778-33500795e128?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- TESTIMONIALS -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="testimonials">
+
+        <div class="testimonial">
+
+          <div class="stars">★★★★★</div>
+
+          <p>
+            "The best oat milk latte in the city. The atmosphere is so peaceful that I can spend hours writing here without any distractions."
+          </p>
+
+          <div class="author">
+
+            <div class="avatar"></div>
+
+            <div>
+              <span class="author-name">Elena Rodriguez</span>
+              <span class="author-job">Local Designer</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="testimonial">
+
+          <div class="stars">★★★★★</div>
+
+          <p>
+            "Incredible attention to detail. Every bean is a journey. Their pour-over selection is truly unmatched for serious coffee lovers."
+          </p>
+
+          <div class="author">
+
+            <div class="avatar"></div>
+
+            <div>
+              <span class="author-name">Marcus Thorne</span>
+              <span class="author-job">Food Critic</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="testimonial">
+
+          <div class="stars">★★★★★</div>
+
+          <p>
+            "Ember & Oak is more than a café; it's a neighborhood anchor. The staff is knowledgeable and the ambiance is just perfect."
+          </p>
+
+          <div class="author">
+
+            <div class="avatar"></div>
+
+            <div>
+              <span class="author-name">Sarah Jennings</span>
+              <span class="author-job">University Professor</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- RESERVATION -->
+
+  <section id="reserve">
+
+    <div class="container">
+
+      <div class="reservation-box">
+
+        <div class="reservation-header">
+
+          <h2 class="headline-lg">
+            Reserve a Table
+          </h2>
+
+          <p class="body-md">
+            Secure your spot for brunch or an evening coffee ritual.
+          </p>
+
+        </div>
+
+        <form>
+
+          <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your Name">
+          </div>
+
+          <div class="input-group">
+            <label>Number of Guests</label>
+
+            <select>
+              <option>1 Guest</option>
+              <option>2 Guests</option>
+              <option>3-4 Guests</option>
+              <option>5+ Guests</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Date</label>
+            <input type="date">
+          </div>
+
+          <div class="input-group">
+            <label>Preferred Time</label>
+            <input type="time">
+          </div>
+
+          <div class="full">
+            <button class="submit-btn">
+              Confirm My Reservation
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container footer-top">
+
+      <div class="footer-brand">
+
+        <h2 class="headline-lg">
+          Ember & Oak
+        </h2>
+
+        <p class="body-md">
+          Elevating the coffee experience through craftsmanship and community since 2018.
+        </p>
+
+      </div>
+
+      <div class="footer-links">
+
+        <div>
+          <h4>Explore</h4>
+
+          <a href="#">Menu</a>
+          <a href="#">Ambiance</a>
+          <a href="#">Reservations</a>
+        </div>
+
+        <div>
+          <h4>Legal</h4>
+
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      © 2024 Ember & Oak Specialty Café. All rights reserved.
+    </div>
+
+  </footer>
+
+</body>
+</html>
